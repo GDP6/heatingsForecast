@@ -51,7 +51,7 @@ public class readData {
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ",";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		double sensor1 =1;
 		double sensor2 =1;
 		double sensor3 =1;
@@ -126,14 +126,14 @@ public class readData {
 		}
 
 
-		int startCopy = 0;
-		int endCopy = 10000;
+		int startCopy = 10000;
+		int endCopy = 20000;
 
 		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
-		tg.createGraph();
+		//tg.createGraph();
 
 		GradientGraph gg = new GradientGraph(Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-		gg.createGraph();
+		//gg.createGraph();
 		ArrayList<Heating> listOfHeatings = gg.startEndHotWaterOn();
 
 		int countpos = 0;
@@ -217,7 +217,14 @@ public class readData {
 		}
 
 		System.out.println(countAllNegDelta);
-		System.out.println((unixTimes[endCopy] - unixTimes[startCopy])/60);
+		Long allTimes= (unixTimes[endCopy] - unixTimes[startCopy]) /60L;
+		
+		System.out.println(allTimes);
+		System.out.println("neg delta ratio " + countNegDelta/countAllNegDelta);
+		
+		Long timeratio = Long.divideUnsigned(allTimes, countHeatings);
+		System.out.println("time ratio 1/" + timeratio);
+
 
 	}
 

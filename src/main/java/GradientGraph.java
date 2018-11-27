@@ -68,7 +68,7 @@ public class GradientGraph {
 				}
 
 				boolean dropped = false;
-				for(int p = (start - 30); p < start; p ++ )
+				for(int p = (start - 2); p < start; p ++ )
 				{
 					if(p < 0)
 					{
@@ -80,7 +80,7 @@ public class GradientGraph {
 					}
 				}
 				boolean restarted = false;
-				for(int p = (start - 5); p <= start + 5; p ++ )
+				for(int p = (start - 5); p <= end; p ++ )
 				{
 					if(p < 0)
 					{
@@ -95,6 +95,12 @@ public class GradientGraph {
 				}
 				if(!dropped && !restarted)
 				{
+					if(unixTime[start] > unixTime[end])
+					{
+						System.out.println(unixTime[start]);
+						System.out.println(unixTime[end]);
+
+					}
 					waterOn.add(new Heating(unixTime[start],unixTime[end],Arrays.copyOfRange(gradients, start, end)));
 				}
 			}
@@ -124,7 +130,7 @@ public class GradientGraph {
 
 		CategoryTableXYDataset dataset = new CategoryTableXYDataset();		
 		for(int i = 0; i < sensor3gradientsSize.length; i++){
-			dataset.add(unixTime[i] / 10000, sensor3gradientsSize[i], "sensor3");
+			dataset.add(unixTime[i] / 10, sensor3gradientsSize[i], "sensor3");
 		} 
 
 
@@ -142,7 +148,9 @@ public class GradientGraph {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		}
+		
 	}
 
 
