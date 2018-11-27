@@ -101,7 +101,10 @@ public class GradientGraph {
 						System.out.println(unixTime[end]);
 
 					}
-					waterOn.add(new Heating(unixTime[start - 5],unixTime[end + 5],Arrays.copyOfRange(gradients, start - 5, end + 5)));
+					try {
+						waterOn.add(new Heating(unixTime[start - 5],unixTime[end + 5],Arrays.copyOfRange(gradients, start - 5, end + 5)));
+					} catch (Exception e) {
+					}
 				}
 			}
 		}

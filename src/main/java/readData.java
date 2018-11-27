@@ -126,8 +126,8 @@ public class readData {
 		}
 
 
-		int startCopy = 10000;
-		int endCopy = 20000;
+		int startCopy = 30000;
+		int endCopy = 38000;
 
 		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
 		//tg.createGraph();
