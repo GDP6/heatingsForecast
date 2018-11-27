@@ -162,7 +162,7 @@ public class readData {
 					endIndex = i;
 				}
 			}
-			double gradient = sensor2list[endIndex + 10] - sensor2list[startIndex - 10];
+			double gradient = sensor2list[endIndex] - sensor2list[startIndex];
 			//System.out.println(gradient);
 			double delta =(gradient * length);
 			
