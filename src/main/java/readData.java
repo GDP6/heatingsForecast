@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Scanner;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.moment.Variance;
@@ -52,9 +53,9 @@ public class readData {
 		String line = "";
 		String cvsSplitBy = ",";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		double sensor1 =1;
-		double sensor2 =1;
-		double sensor3 =1;
+		double sensor1 = 55.8;
+		double sensor2 = 51.5;
+		double sensor3 = 31.375;
 		Long unixTime = 1L;
 		try {
 
@@ -75,19 +76,17 @@ public class readData {
 					}
 					sensor1 = Double.parseDouble(readings[3]);
 				}
-				else if(readings[2].equals("T5 Temperature"))
+				else if(readings[2].equals("T2 Temperature"))
 				{
 					sensor2 = Double.parseDouble(readings[3]);
 
 				}
-				else if(readings[2].equals("T2 Temperature"))
+				else if(readings[2].equals("T5 Temperature"))
 				{
 					sensor3 = Double.parseDouble(readings[3]);
 
-					if(sensor3 > 40)
-					{
 					listOfReadings.add(new BulkTempReadings(sensor1,sensor2,sensor3,unixTime));
-					}
+
 
 				}
 
@@ -111,6 +110,65 @@ public class readData {
 		}
 		System.out.println(listOfReadings.size());
 
+
+
+		Forecast f = new Forecast();
+		Double[] sensor2list = new Double[listOfReadings.size()];
+		Double[] sensor3list = new Double[listOfReadings.size()];
+		Long[] unixTimes = new Long[listOfReadings.size()];
+
+		for(int i = 0; i < listOfReadings.size(); i ++)
+		{
+			
+			sensor2list[i] = listOfReadings.get(i).sensor2;
+			
+			
+			if(i < 60)
+			{
+				sensor3list[i] = listOfReadings.get(i).sensor3;
+			}
+			else
+			{
+				Double countAverage = 0.0;
+				for(int p = i - 60; p <= i; p ++)
+				{
+					countAverage += listOfReadings.get(p).sensor3;
+				}
+				sensor3list[i] = countAverage / 60;
+			}
+			unixTimes[i] = listOfReadings.get(i).timeTaken;
+
+		}
+
+
+		
+		Scanner userInput = new Scanner(System.in);
+		for(int i = 0; i < 10000; i ++)
+		{
+			f.tick(sensor3list[i], unixTimes[i]);
+			//System.out.println("forecast current temp:" + f.currentTemp);
+			//System.out.println("real current temp:" + sensor2list[i]);
+			//System.out.println("diffrence temp:" + (f.currentTemp - sensor2list[i]));
+			//userInput.nextLine();
+
+		}
+		int startCopy = 0;
+		int endCopy = 10000;
+
+		//FeatureFinder ff = new FeatureFinder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
+		
+	//	ff.faucetIncreases();
+		//ff.averageDifferences();
+		
+		Double[] forecast = f.sensor2forecast.toArray(new Double[f.sensor2forecast.size()]);
+
+	
+	System.out.println(f.faucetIncreasing);
+
+		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
+		tg.createGraph();
+
+		/*
 		double[] sensor1list = new double[listOfReadings.size()];
 		double[] sensor2list = new double[listOfReadings.size()];
 		double[] sensor3list = new double[listOfReadings.size()];
@@ -126,106 +184,86 @@ public class readData {
 		}
 
 
-		int startCopy = 30000;
-		int endCopy = 38000;
+		int startCopy = 2000;
+		int endCopy = 5000;
 
 		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
-		//tg.createGraph();
+		tg.createGraph();
 
 		GradientGraph gg = new GradientGraph(Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
 		//gg.createGraph();
-		ArrayList<Heating> listOfHeatings = gg.startEndHotWaterOn();
+		ArrayList<Heating> listOfHeatings = gg.startEndHotWaterOn(0.5,1000l,1000l);
 
 		int countpos = 0;
 		int countneg = 0;
-		int countdelta =0;
-		int countNegDelta = 0;
+		double countdelta =0;
+		double countNegDelta = 0;
+		double countPosDelta = 0;
 		Long countHeatings = 0L;
 		for(Heating h: listOfHeatings)
 		{
-			
-			
+
+
 			Long length = (h.end  - h.start) / 60 ;
 			countHeatings += length;
 			//System.out.println(h.start + " to " + h.end);
-			int startIndex =0;
-			int endIndex =0;
 
-			for(int i = 0; i < unixTimes.length; i ++)
-			{
-				if(h.start.equals(unixTimes[i]))
-				{
-					startIndex = i;
-				}
-				if(h.end.equals(unixTimes[i]))
-				{
-					endIndex = i;
-				}
-			}
-			double gradient = sensor2list[endIndex] - sensor2list[startIndex];
-			//System.out.println(gradient);
-			double delta =(gradient * length);
-			
-			if(delta < 0)
-			{
-				countNegDelta += delta;
-			}
-			//System.out.println(delta);
-
-			/*
-			if(delta > 10)
-			{
-
-				System.out.println("");
-
-				System.out.println(h.start + " to " + h.end);
-				System.out.println(startIndex + " to " + endIndex);
-
-				System.out.println(length);
-
-				System.out.println(gradient);
-
-				System.out.println(delta);
-
-			}
-			*/
-			if(gradient < 0)
+			double delta = sensor2list[h.endIndex] - sensor2list[h.startIndex];
+			System.out.println(delta);
+			if(delta <= 0)
 			{
 				countneg += 1;
+				countNegDelta += delta;
 			}
 			else
 			{
 				countpos += 1;
+				countPosDelta += delta;
+
 			}
+
+			System.out.println(countdelta);
 			countdelta += delta;
 
 
 		}
-		//System.out.println("");
-		//System.out.println(countneg);
-		//System.out.println(countpos);
+		System.out.println("");
+		System.out.println(countneg);
+		System.out.println(countpos);
+		System.out.println("");
+		System.out.println(countdelta);
+		System.out.println("");
 		System.out.println(countNegDelta);
+		System.out.println(countPosDelta);
+		System.out.println("");
+
 		System.out.println(countHeatings);
+		int averageHeatingLen = (int) (countHeatings/listOfHeatings.size());
 
 		double countAllNegDelta = 0;
-		for(int i = startCopy;i< endCopy;i ++)
+		double countAllPosDelta = 0;
+
+		for(int i = startCopy;i< endCopy;i += averageHeatingLen)
 		{
-			if(sensor2list[i] - sensor2list[i + 1] < 0)
+			if(sensor2list[i] - sensor2list[i + averageHeatingLen] < 0)
 			{
-				countAllNegDelta += sensor2list[i] - sensor2list[i + 1];
+				countAllNegDelta += sensor2list[i] - sensor2list[i + averageHeatingLen];
+			}
+			else
+			{
+				countAllPosDelta += sensor2list[i] - sensor2list[i + averageHeatingLen];
+
 			}
 		}
 
-		System.out.println(countAllNegDelta);
 		Long allTimes= (unixTimes[endCopy] - unixTimes[startCopy]) /60L;
-		
-		System.out.println(allTimes);
 		System.out.println("neg delta ratio " + countNegDelta/countAllNegDelta);
-		
+		System.out.println("pos delta ratio " + countPosDelta/countAllPosDelta);
+
 		Long timeratio = Long.divideUnsigned(allTimes, countHeatings);
 		System.out.println("time ratio 1/" + timeratio);
 
-
+		 */
 	}
 
 

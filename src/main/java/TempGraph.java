@@ -10,15 +10,17 @@ import org.jfree.data.xy.CategoryTableXYDataset;
 
 public class TempGraph {
 
-	double[] sensor2list;
-	double[] sensor3list;
+	Double[] sensor2list;
+	Double[] sensor3list;
+	Double[] sensor2forecast;
 	Long[] unixTimes;
 	String filename;
 
 	
 	
-	public TempGraph(double[] sensor2list, double[] sensor3list, Long[] unixTimes, String filename) {
+	public TempGraph(Double[] sensor2list, Double[] sensor3list,Double[] sensor2forecast, Long[] unixTimes, String filename) {
 		super();
+		this.sensor2forecast = sensor2forecast;
 		this.sensor2list = sensor2list;
 		this.sensor3list = sensor3list;
 		this.unixTimes = unixTimes;
@@ -31,11 +33,15 @@ public class TempGraph {
 	{
 		CategoryTableXYDataset dataset = new CategoryTableXYDataset();		
 		for(int i = 0; i < sensor2list.length; i++){
-			dataset.add(unixTimes[i],sensor2list[i], "sensor2");
+			dataset.add(unixTimes[i],sensor2list[i], "True Data (sensor 2)");
 		} 
 		
 		for(int i = 0; i < sensor3list.length; i++){
-			dataset.add(unixTimes[i],sensor3list[i], "sensor3");
+			dataset.add(unixTimes[i],sensor3list[i], "Faucet Data (sensor 3)");
+		} 
+		
+		for(int i = 0; i < sensor2forecast.length; i++){
+			dataset.add(unixTimes[i],sensor2forecast[i], "Forecasted Data");
 		} 
 		
 		
