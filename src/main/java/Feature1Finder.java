@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
-public class FeatureFinder {
+public class Feature1Finder {
 
 
 
@@ -17,7 +17,7 @@ public class FeatureFinder {
 	Double[] sensor3list;
 	Long[] unixTimes;
 	ArrayList<Cooling> listOfCoolings = new ArrayList<Cooling>();
-	public FeatureFinder(Double[] sensor2list, Double[] sensor3list, Long[] unixTimes) {
+	public Feature1Finder(Double[] sensor2list, Double[] sensor3list, Long[] unixTimes) {
 		super();
 		this.sensor2list = sensor2list;
 		this.sensor3list = sensor3list;
@@ -96,7 +96,7 @@ public class FeatureFinder {
 			Integer length = (h.endIndex  - h.startIndex);
 			endAverage = endAverage / length;
 */
-			endAverage = sensor2list[h.endIndex];
+ 
 
 			Double averageLoss = endAverage - startingAverage;
 			averageLosses[count] = averageLoss;

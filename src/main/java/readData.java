@@ -112,17 +112,17 @@ public class readData {
 
 
 
-		
+
 		Double[] sensor2list = new Double[listOfReadings.size()];
 		Double[] sensor3list = new Double[listOfReadings.size()];
 		Long[] unixTimes = new Long[listOfReadings.size()];
 
 		for(int i = 0; i < listOfReadings.size(); i ++)
 		{
-			
+
 			sensor2list[i] = listOfReadings.get(i).sensor2;
-			
-			
+
+
 			if(i < 60)
 			{
 				sensor3list[i] = listOfReadings.get(i).sensor3;
@@ -140,12 +140,13 @@ public class readData {
 
 		}
 
-		
+		System.out.println(unixTimes[0]);
+
 		Forecast f = new Forecast();
 
-		
+
 		Scanner userInput = new Scanner(System.in);
-		for(int i = 10000; i < 20000; i ++)
+		for(int i = 0; i < 40000; i ++)
 		{
 			f.tick(sensor3list[i], unixTimes[i]);
 			//System.out.println("forecast current temp:" + f.currentTemp);
@@ -154,23 +155,26 @@ public class readData {
 			//userInput.nextLine();
 
 		}
-		
-		
-		int startCopy = 10000;
-		int endCopy = 20000;
 
-		//FeatureFinder ff = new FeatureFinder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-		
-		//ff.faucetIncreases();
-		//ff.averageDifferences();
-		
+
+		int startCopy = 0;
+		int endCopy = 40000;
+
+
+		Feature0Finder ff = new Feature0Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
+		ff.findIncreases();
 		Double[] forecast = f.sensor2forecast.toArray(new Double[f.sensor2forecast.size()]);
 
-	
 
-		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
-		tg.createGraph();
 
+		//TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
+		//tg.createGraph();
+
+
+		//FeatureFinder ff = new FeatureFinder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
+
+		//ff.faucetIncreases();
+		//ff.averageDifferences();
 		/*
 		double[] sensor1list = new double[listOfReadings.size()];
 		double[] sensor2list = new double[listOfReadings.size()];
