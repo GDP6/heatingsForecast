@@ -25,69 +25,8 @@ public class Feature0Finder {
 		this.sensor2list = sensor2list;
 		this.unixTimes = unixTimes;
 	}
-	/*
 	public void findIncreases()
 	{
-		Double lastHeating = 0.0;
-		Double lastEndTemp = 0.0;
-
-		for(int i = 0; i < sensor2list.length - 2; i ++)
-		{
-			Double difference = sensor2list[i + 1] - sensor2list[i];
-			if(difference > 0.05)
-			{
-
-				int start = i;
-				int end = i + 11;
-				for(int p = i + 1; p < i + 10; p ++)
-				{
-					Double differencep = sensor2list[p + 1] - sensor2list[p];
-					if(differencep > 0.05)
-					{
-						end = p + 1;
-					}
-					else
-					{
-						break;
-					}
-
-				}
-				i = end;
-
-				if(end - start < 10 && end - start > 3 && sensor2list[start] > 35 && sensor2list[end] - sensor2list[start] > 1.4)
-				{
-					Double coldingLength = unixTimes[start].doubleValue() - lastHeating;
-					Double coldingLoss = lastEndTemp - sensor2list[end];
-					Double heatingLength = unixTimes[end].doubleValue() - unixTimes[start].doubleValue();
-					Double heatingGain = sensor2list[end] - sensor2list[start];
-
-
-					if (coldingLength < 7000)
-					{
-						coldingLengths.add(coldingLength);
-						coldingLosses.add(coldingLoss);
-						heatingLengths.add(heatingLength);
-						heatingGains.add(heatingGain);
-						currentTemps.add(sensor2list[start]);
-						smallHeats.add(new Integer[] {start,end});
-					}
-					lastHeating = unixTimes[start].doubleValue();
-					lastEndTemp = sensor2list[start];
-				}
-			}
-		}
-
-
-		//colding losses and lengths out of order
-		coldingLengths.remove(0);
-		coldingLosses.remove(0);
-
-
-	}
-	 */
-	public void findIncreases()
-	{
-		int numOfCoolings = 0;
 		for(int i = 0; i < sensor2list.length - 100; i ++)
 		{
 
@@ -149,7 +88,6 @@ public class Feature0Finder {
 				}
 			}
 		}
-		System.out.println(numOfCoolings);
 
 	}
 

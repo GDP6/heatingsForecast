@@ -5,134 +5,102 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 public class Feature1Finder {
 
 
-
-	Double threshold = 0.0 ;
-	int minLength = 3;
-	int startLead = 4;
-	int endFollow = 20;
-
-
-
 	Double[] sensor2list;
 	Double[] sensor3list;
 	Long[] unixTimes;
-	ArrayList<Cooling> listOfCoolings = new ArrayList<Cooling>();
 	public Feature1Finder(Double[] sensor2list, Double[] sensor3list, Long[] unixTimes) {
 		super();
 		this.sensor2list = sensor2list;
 		this.sensor3list = sensor3list;
 		this.unixTimes = unixTimes;
+
+		/*
+		for(int i = 0; i < sensor2list.length - 100; i ++)
+		{
+
+			if(unixTimes[i] > 1513750000 && unixTimes[i] < 1513763000)
+			{
+				Double difference = sensor2list[i + 1] - sensor2list[i];
+				System.out.println(difference);
+
+			}
+		}
+		 */
+
 	}
 
-
-	public void faucetIncreases()
+	public void findFaucetSharpIncrease()
 	{
-		int start = sensor3list.length;
-		for(int i = 60; i < sensor3list.length - 1; i ++)
+		Double sharpIncreases = 0.0;
+		for(int i = 0; i < sensor3list.length - 100; i ++)
 		{
-			if(unixTimes[i] < 1514640000 || unixTimes[i] > 1514715000)
+
+			Double difference = sensor3list[i + 4] - sensor3list[i];
+			if(difference > 0.8)
 			{
-				if(sensor3list[i + 1] - sensor3list[i] > threshold)
+				sharpIncreases += 1;
+				i = i + 4;
+			}
+			
+		}
+		System.out.println(sharpIncreases);
+	}
+
+	public void findSharpDecreses()
+	{
+
+		Double countDrop  =0.0;
+		Double added = 0.0;
+		for(int i = 0; i < sensor2list.length - 100; i ++)
+		{
+
+			Double difference = sensor2list[i + 1] - sensor2list[i];
+			if(difference < -0.3)
+			{
+				int startingDropIndex = i;
+				int endingDropIndex = i;
+				for(int p = i + 1; p < i + 13; p += 1)
 				{
-					if(start == sensor3list.length)
+					//System.out.println("p:" + p);
+					Double differencep = sensor2list[p + 1] - sensor2list[p];
+					if(differencep < -0.3)
 					{
-						start = i;
+						endingDropIndex = p + 1;
+						i = p;
+					}
+					else
+					{
+						break;
 					}
 				}
-				else
+				if(startingDropIndex != endingDropIndex)
 				{
-					if(start != sensor3list.length)
-					{
-						boolean add = true;
-						//make sure actually heating and not just fluctations 
-						if(i - start < minLength)
-						{
-							add = false;
-						}
-						for(int p = start - 60; p < i + 15 ; p ++)
-						{
-							if(unixTimes[p + 1] - unixTimes[p] > 300)
-							{
-								add = false;
-							}
-						}
-						if(add)
-						{
-							Double allHeat = sensor3list[i] - sensor3list[start];
-							Cooling h = new Cooling(unixTimes[start],unixTimes[i],start + startLead,i + endFollow ,allHeat);
-							listOfCoolings.add(h);
-						}
-						start = sensor3list.length;
+					System.out.println(startingDropIndex + " to " + endingDropIndex);
+					Double tempDropped = sensor2list[endingDropIndex] - sensor2list[startingDropIndex];
+					System.out.println("");
 
-					}
+					if(tempDropped> 1)
+					{
+						for(int k = startingDropIndex - 10; k <= endingDropIndex; k++)
+						{
+							Double differencek = sensor3list[k + 1] - sensor3list[k];
+							System.out.println(differencek);
+						}
+
+					}	
+					added += 1;
+
+					System.out.println("");
+
+
+
+
 				}
 			}
-		}
-	}
-
-	public void averageDifferences()
-	{
-		Double countpos = 0.0;
-		Double countavg = 0.0;
-		Double[] averageLosses = new Double[listOfCoolings.size()];
-		int count = 0;
-		for(Cooling h: listOfCoolings)
-		{
-			Double startingAverage = 0.0;
-			/*
-			for(int p = h.startIndex - 30; p < h.startIndex ; p ++)
-			{
-				startingAverage += sensor2list[p];
-			}
-			startingAverage = startingAverage / 30;
-			 */
-			startingAverage = sensor2list[h.startIndex];
-			Double endAverage = 0.0;
-			/*
-			for(int p = h.startIndex; p < h.endIndex ; p ++)
-			{
-				endAverage += sensor2list[p];
-			}
-			Integer length = (h.endIndex  - h.startIndex);
-			endAverage = endAverage / length;
-*/
- 
-
-			Double averageLoss = endAverage - startingAverage;
-			averageLosses[count] = averageLoss;
-			if(averageLoss > 0)
-			{
-
-				countpos ++;
-			}
-			else
-			{
-				countavg += averageLoss;
-
-			}
-
-			count ++;
 
 		}
-		System.out.println(countpos/listOfCoolings.size());
-		System.out.println(countavg/listOfCoolings.size());
-
-		SimpleRegression simpleRegression = new SimpleRegression(true);
-		double[][] regression = new double[listOfCoolings.size()][];
-		for(int i = 0; i < listOfCoolings.size(); i ++)
-		{
-			regression[i] = new double[]{listOfCoolings.get(i).allHeat,averageLosses[i]};
-		}
-		simpleRegression.addData(regression);
-
-
-
-		System.out.println("slope = " + simpleRegression.getSlope());
-		System.out.println("intercept = " + simpleRegression.getIntercept());
-		System.out.println(Math.sqrt(simpleRegression.getRegressionSumSquares())/40);
-
+		System.out.println(added);
 
 	}
-
 
 }

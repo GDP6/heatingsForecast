@@ -112,6 +112,7 @@ public class readData {
 
 
 
+		Double[] sensor1list = new Double[listOfReadings.size()];
 
 		Double[] sensor2list = new Double[listOfReadings.size()];
 		Double[] sensor3list = new Double[listOfReadings.size()];
@@ -119,33 +120,30 @@ public class readData {
 
 		for(int i = 0; i < listOfReadings.size(); i ++)
 		{
+			sensor1list[i] = listOfReadings.get(i).sensor1;
 
 			sensor2list[i] = listOfReadings.get(i).sensor2;
 
 
-			if(i < 20000)
-			{
-				sensor3list[i] = listOfReadings.get(i).sensor3;
-			}
-			else
-			{
-				Double countAverage = 0.0;
-				for(int p = i - 60; p <= i; p ++)
-				{
-					countAverage += listOfReadings.get(p).sensor3;
-				}
-				sensor3list[i] = countAverage / 60;
-			}
+
+			sensor3list[i] = listOfReadings.get(i).sensor3;
+
 			unixTimes[i] = listOfReadings.get(i).timeTaken;
 
 		}
 
 
+
+
+		int startCopy = 0;
+		int endCopy = 10000;
+		/*
+
 		Forecast f = new Forecast();
 
 
 		Scanner userInput = new Scanner(System.in);
-		for(int i = 0; i < 10000; i ++)
+		for(int i = startCopy; i < endCopy; i ++)
 		{
 			f.tick(sensor3list[i], unixTimes[i]);
 			System.out.println("forecast current temp:" + f.currentTemp);
@@ -155,123 +153,30 @@ public class readData {
 
 		}
 
-
-		int startCopy = 0;
-		int endCopy = 10000;
-
-
-		Feature0Finder ff = new Feature0Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-		ff.findIncreases();
-		ff.findParamaters();
-		//ff.createGraph();
 		Double[] forecast = f.sensor2forecast.toArray(new Double[f.sensor2forecast.size()]);
 
 
 
-		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
-		tg.createGraph();
+
+		 */
 
 
-		//FeatureFinder ff = new FeatureFinder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-
-		//ff.faucetIncreases();
-		//ff.averageDifferences();
 		/*
-		double[] sensor1list = new double[listOfReadings.size()];
-		double[] sensor2list = new double[listOfReadings.size()];
-		double[] sensor3list = new double[listOfReadings.size()];
-		Long[] unixTimes = new Long[listOfReadings.size()];
-
-		for(int i = 0; i < listOfReadings.size(); i ++)
-		{
-			sensor1list[i] = listOfReadings.get(i).sensor1;
-			sensor2list[i] = listOfReadings.get(i).sensor2;
-			sensor3list[i] = listOfReadings.get(i).sensor3;
-			unixTimes[i] = listOfReadings.get(i).timeTaken;
-
-		}
-
-
-		int startCopy = 2000;
-		int endCopy = 5000;
+		Feature0Finder ff0 = new Feature0Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
+		ff0.findIncreases();
+		ff0.findParamaters();
+		ff0.createGraph();
+		 */
 
 		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
 		tg.createGraph();
 
-		GradientGraph gg = new GradientGraph(Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-		//gg.createGraph();
-		ArrayList<Heating> listOfHeatings = gg.startEndHotWaterOn(0.5,1000l,1000l);
-
-		int countpos = 0;
-		int countneg = 0;
-		double countdelta =0;
-		double countNegDelta = 0;
-		double countPosDelta = 0;
-		Long countHeatings = 0L;
-		for(Heating h: listOfHeatings)
-		{
+		Feature1Finder ff1 = new Feature1Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
+		ff1.findFaucetSharpIncrease();
 
 
-			Long length = (h.end  - h.start) / 60 ;
-			countHeatings += length;
-			//System.out.println(h.start + " to " + h.end);
-
-			double delta = sensor2list[h.endIndex] - sensor2list[h.startIndex];
-			System.out.println(delta);
-			if(delta <= 0)
-			{
-				countneg += 1;
-				countNegDelta += delta;
-			}
-			else
-			{
-				countpos += 1;
-				countPosDelta += delta;
-
-			}
-
-			System.out.println(countdelta);
-			countdelta += delta;
 
 
-		}
-		System.out.println("");
-		System.out.println(countneg);
-		System.out.println(countpos);
-		System.out.println("");
-		System.out.println(countdelta);
-		System.out.println("");
-		System.out.println(countNegDelta);
-		System.out.println(countPosDelta);
-		System.out.println("");
-
-		System.out.println(countHeatings);
-		int averageHeatingLen = (int) (countHeatings/listOfHeatings.size());
-
-		double countAllNegDelta = 0;
-		double countAllPosDelta = 0;
-
-		for(int i = startCopy;i< endCopy;i += averageHeatingLen)
-		{
-			if(sensor2list[i] - sensor2list[i + averageHeatingLen] < 0)
-			{
-				countAllNegDelta += sensor2list[i] - sensor2list[i + averageHeatingLen];
-			}
-			else
-			{
-				countAllPosDelta += sensor2list[i] - sensor2list[i + averageHeatingLen];
-
-			}
-		}
-
-		Long allTimes= (unixTimes[endCopy] - unixTimes[startCopy]) /60L;
-		System.out.println("neg delta ratio " + countNegDelta/countAllNegDelta);
-		System.out.println("pos delta ratio " + countPosDelta/countAllPosDelta);
-
-		Long timeratio = Long.divideUnsigned(allTimes, countHeatings);
-		System.out.println("time ratio 1/" + timeratio);
-
-		 */
 	}
 
 
