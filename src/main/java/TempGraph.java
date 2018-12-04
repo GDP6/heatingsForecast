@@ -51,7 +51,6 @@ public class TempGraph {
 		} 
 		
 		
-		
 		try {
 			for(int i = 0; i < sensor2forecast.length; i++){
 				dataset.add(unixTimes[i],sensor2forecast[i], "Forecasted Data");

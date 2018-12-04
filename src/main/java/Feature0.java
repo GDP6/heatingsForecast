@@ -1,48 +1,105 @@
 
 public class Feature0 {
-	
-	Long heatingTime = 495L;
-	Long coolingTime = 3826L;
-	Double gain = 1.0;
-	Double loss = 0.0001;
+
+	Double heatingTime;
+	Double coldingTime;
+	Double gain;
+	Double loss;
 	Long lastTime;
 	Long firstTime;
 
 
 
-	
+
 	public Feature0(Long lastTime, Long firstTime) {
 		this.lastTime = lastTime;
 		this.firstTime = firstTime;
+		setAllVariables(58.0);
+
 	}
 
+
+
+	public Double findHeatingTime(Double currentTemp)
+	{
+		return 773.8850914210703 - (currentTemp * 5.209158376824304);
+	}
+
+	public Double findColdingTime(Double currentTemp)
+	{
+		return 667.9497021485934 + (currentTemp * 52.93806785791462);
+	}
+
+	public Double findHeatingAmount(Double currentTemp)
+	{
+		return 11 - (currentTemp * 0.16);
+	}
+
+	public Double findColdingAmount(Double currentTemp)
+	{
+		return 4.61 - (currentTemp  * 0.117);
+	}
+
+	public void setAllVariables(Double currentTemp)
+	{
+		heatingTime = findHeatingTime(currentTemp);
+		coldingTime = findColdingTime(currentTemp);
+
+		gain = findHeatingAmount(currentTemp)/ heatingTime;
+		loss = findColdingAmount(currentTemp) / coldingTime;
+	}
 
 
 
 	public Double nextTemp(Double currentTemp, Long time)
 	{
-		Double heatingRatio = heatingRatio(time);
-		Double newTemp = currentTemp + (gain*heatingRatio + loss*(1-heatingRatio) * (time-lastTime));
+
+		setAllVariables(currentTemp);
+
+		Double heatingRatio = heatingRatio(time);	
+		Double gainThisTick = gain*heatingRatio * (time-lastTime);
+		Double lossThisTick = loss*(1-heatingRatio) * (time-lastTime);
+
+		Double newTemp = currentTemp + gainThisTick + lossThisTick ;
 		lastTime = time;
 		return newTemp;
 	}
-	
-	
+
+
+	public boolean newCycle(Long time)
+	{
+		Double lastPhase = (lastTime - firstTime) % (heatingTime + coldingTime);
+		Double currentPhase = (time.doubleValue() - firstTime) % (heatingTime + coldingTime);
+
+
+		System.out.println(currentPhase);
+		System.out.println(lastPhase);
+
+		if(currentPhase < lastPhase)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public Double heatingRatio(Long time)
 	{
-		
-		Long currentPhase = (time - firstTime) % (heatingTime + coolingTime);
-		Long lastPhase = (lastTime - firstTime) % (heatingTime + coolingTime);
-		Long timeHeating = 0L;
+
+		Double currentPhase = (time.doubleValue() - firstTime) % (heatingTime + coldingTime);
+		Double lastPhase = (lastTime - firstTime) % (heatingTime + coldingTime);
+		Double timeHeating = 0.0;
 
 
 		if(currentPhase > heatingTime && lastPhase < heatingTime)
 		{
-			 timeHeating =  heatingTime - lastPhase;
+			timeHeating =  heatingTime - lastPhase;
 		}
 		else if(currentPhase > heatingTime && lastPhase > heatingTime)
 		{
-			timeHeating = 0L;
+			timeHeating = 0.0;
 		}
 		else if(currentPhase < heatingTime && lastPhase < heatingTime)
 		{
@@ -52,17 +109,13 @@ public class Feature0 {
 		{
 			timeHeating = currentPhase;
 		}
-		
 
-	
-		
-		Double ratio = (double) (timeHeating.doubleValue()/(time.doubleValue()-lastTime.doubleValue()));
-
+		Double ratio = (double) (timeHeating)/(time.doubleValue()-lastTime.doubleValue());
 
 		return ratio;
 	}
-	
-	
-	
+
+
+
 
 }

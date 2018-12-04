@@ -123,7 +123,7 @@ public class readData {
 			sensor2list[i] = listOfReadings.get(i).sensor2;
 
 
-			if(i < 60)
+			if(i < 20000)
 			{
 				sensor3list[i] = listOfReadings.get(i).sensor3;
 			}
@@ -145,12 +145,12 @@ public class readData {
 
 
 		Scanner userInput = new Scanner(System.in);
-		for(int i = 0; i < 40000; i ++)
+		for(int i = 0; i < 10000; i ++)
 		{
 			f.tick(sensor3list[i], unixTimes[i]);
-			//System.out.println("forecast current temp:" + f.currentTemp);
-			//System.out.println("real current temp:" + sensor2list[i]);
-			//System.out.println("diffrence temp:" + (f.currentTemp - sensor2list[i]));
+			System.out.println("forecast current temp:" + f.currentTemp);
+			System.out.println("real current temp:" + sensor2list[i]);
+			System.out.println("diffrence temp:" + (f.currentTemp - sensor2list[i]));
 			//userInput.nextLine();
 
 		}
@@ -162,12 +162,13 @@ public class readData {
 
 		Feature0Finder ff = new Feature0Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
 		ff.findIncreases();
-		ff.createGraph();
+		ff.findParamaters();
+		//ff.createGraph();
 		Double[] forecast = f.sensor2forecast.toArray(new Double[f.sensor2forecast.size()]);
 
 
 
-		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
+		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
 		tg.createGraph();
 
 

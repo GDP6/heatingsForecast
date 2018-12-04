@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class Forecast {
 
-	double currentTemp = 51;
-	double highestTemp = 58;
-	double lowestTemp = 45;
+	double currentTemp = 51.5;
+	double highestTemp = 59;
+	double lowestTemp = 35;
 	double threshold = 0.07;
 
 	ArrayList<Double> sensor3list = new ArrayList<Double>();
@@ -50,7 +50,7 @@ public class Forecast {
 
 		}
 		//if more than 5 mins has passed since the last reading, then reset
-		
+		sensor2forecast.add(currentTemp);
 
 	}
 

@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -89,7 +90,7 @@ public class Feature0Finder {
 		int numOfCoolings = 0;
 		for(int i = 0; i < sensor2list.length - 100; i ++)
 		{
-			
+
 			Double difference = sensor2list[i + 1] - sensor2list[i];
 			if(difference > 0.05)
 			{
@@ -125,7 +126,7 @@ public class Feature0Finder {
 									double heatGain = sensor2list[endingHeatIndex] - sensor2list[startingHeatIndex];
 
 
-									if(timeColding >= 2500 && timeColding < 4200 & coldingLoss > -3.5 & heatGain < 4.0)
+									if(timeColding >= 2500 && timeColding < 4200 && coldingLoss > -3.5 && heatGain < 4.0)
 									{
 										currentTemps.add(sensor2list[startingHeatIndex]);
 										coldingLengths.add(timeColding.doubleValue());
@@ -134,15 +135,15 @@ public class Feature0Finder {
 										heatingGains.add(heatGain);
 
 									}
-									
+
 								}
 							}
-							
+
 							i = p;
 							break;
-						
+
 						}
-						
+
 
 					}
 				}
@@ -152,6 +153,72 @@ public class Feature0Finder {
 
 	}
 
+
+
+	public void findParamaters()
+	{
+		System.out.println(currentTemps.size());
+		System.out.println(heatingLengths.size());
+
+		SimpleRegression simpleRegression = new SimpleRegression(true);
+		double[][] regression = new double[currentTemps.size() ][];
+		for(int i = 0; i < currentTemps.size(); i ++)
+		{
+			regression[i] = new double[]{currentTemps.get(i),heatingLengths.get(i)};
+		}
+		simpleRegression.addData(regression);
+
+
+		System.out.println("");
+		System.out.println("Heating Lengths");
+		System.out.println("slope = " + simpleRegression.getSlope());
+		System.out.println("intercept = " + simpleRegression.getIntercept());
+
+		simpleRegression = new SimpleRegression(true);
+		regression = new double[currentTemps.size()][];
+		for(int i = 0; i < currentTemps.size(); i ++)
+		{
+			regression[i] = new double[]{currentTemps.get(i),coldingLengths.get(i)};
+		}
+		simpleRegression.addData(regression);
+
+
+		System.out.println("");
+		System.out.println("Colding Lengths");
+		System.out.println("slope = " + simpleRegression.getSlope());
+		System.out.println("intercept = " + simpleRegression.getIntercept());
+
+		simpleRegression = new SimpleRegression(true);
+		regression = new double[currentTemps.size()][];
+		for(int i = 0; i < currentTemps.size(); i ++)
+		{
+			regression[i] = new double[]{currentTemps.get(i),coldingLosses.get(i)};
+		}
+		simpleRegression.addData(regression);
+
+
+		System.out.println("");
+		System.out.println("Colding Losses");
+		System.out.println("slope = " + simpleRegression.getSlope());
+		System.out.println("intercept = " + simpleRegression.getIntercept());
+
+		simpleRegression = new SimpleRegression(true);
+		regression = new double[currentTemps.size()][];
+		for(int i = 0; i < currentTemps.size(); i ++)
+		{
+			regression[i] = new double[]{currentTemps.get(i),heatingGains.get(i)};
+		}
+		simpleRegression.addData(regression);
+		
+
+
+		System.out.println("");
+		System.out.println("Heating Gains");
+		System.out.println("slope = " + simpleRegression.getSlope());
+		System.out.println("intercept = " + simpleRegression.getIntercept());
+
+	
+	}
 
 	public void createGraph()
 	{
@@ -188,7 +255,7 @@ public class Feature0Finder {
 		}
 
 		dataset = new CategoryTableXYDataset();		
-		for(int i = 1; i < currentTemps.size() - 1; i++){
+		for(int i = 1; i < currentTemps.size(); i++){
 			dataset.add(currentTemps.get(i),coldingLosses.get(i), "Colding Losses");
 		} 
 		lineChartObject = ChartFactory.createScatterPlot("Colding Losses vs Starting Temp", "Starting Temp", "Colding", dataset);
