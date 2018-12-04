@@ -48,7 +48,6 @@ public class Forecast {
 
 			stayInBounds();
 
-			sensor2forecast.add(currentTemp);
 		}
 		//if more than 5 mins has passed since the last reading, then reset
 		

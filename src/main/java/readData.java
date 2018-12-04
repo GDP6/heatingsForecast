@@ -140,7 +140,6 @@ public class readData {
 
 		}
 
-		System.out.println(unixTimes[0]);
 
 		Forecast f = new Forecast();
 
@@ -158,17 +157,18 @@ public class readData {
 
 
 		int startCopy = 0;
-		int endCopy = 40000;
+		int endCopy = 10000;
 
 
 		Feature0Finder ff = new Feature0Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
 		ff.findIncreases();
+		ff.createGraph();
 		Double[] forecast = f.sensor2forecast.toArray(new Double[f.sensor2forecast.size()]);
 
 
 
-		//TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),forecast,Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
-		//tg.createGraph();
+		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
+		tg.createGraph();
 
 
 		//FeatureFinder ff = new FeatureFinder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));

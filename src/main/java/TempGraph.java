@@ -29,6 +29,16 @@ public class TempGraph {
 
 
 
+	public TempGraph(Double[] sensor2list, Double[] sensor3list, Long[] unixTimes, String filename) {
+		super();
+		this.sensor2list = sensor2list;
+		this.sensor3list = sensor3list;
+		this.unixTimes = unixTimes;
+		this.filename = filename;
+	}
+
+
+
 	public void createGraph()
 	{
 		CategoryTableXYDataset dataset = new CategoryTableXYDataset();		
@@ -40,8 +50,14 @@ public class TempGraph {
 			dataset.add(unixTimes[i],sensor3list[i], "Faucet Data (sensor 3)");
 		} 
 		
-		for(int i = 0; i < sensor2forecast.length; i++){
-			dataset.add(unixTimes[i],sensor2forecast[i], "Forecasted Data");
+		
+		
+		try {
+			for(int i = 0; i < sensor2forecast.length; i++){
+				dataset.add(unixTimes[i],sensor2forecast[i], "Forecasted Data");
+			}
+		} catch (Exception e1) {
+		
 		} 
 		
 		
