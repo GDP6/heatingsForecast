@@ -121,13 +121,17 @@ public class Feature0Finder {
 								else
 								{
 									Long timeColding = unixTimes[endingColdIndex] - unixTimes[startingColdIndex];
-									if(timeColding >= 2500 && timeColding < 4200)
+									double coldingLoss = sensor2list[endingColdIndex] - sensor2list[startingColdIndex];
+									double heatGain = sensor2list[endingHeatIndex] - sensor2list[startingHeatIndex];
+
+
+									if(timeColding >= 2500 && timeColding < 4200 & coldingLoss > -3.5 & heatGain < 4.0)
 									{
 										currentTemps.add(sensor2list[startingHeatIndex]);
 										coldingLengths.add(timeColding.doubleValue());
-										coldingLosses.add(sensor2list[endingColdIndex] - sensor2list[startingColdIndex]);
+										coldingLosses.add(coldingLoss);
 										heatingLengths.add(timeHeating.doubleValue());
-										heatingGains.add(sensor2list[endingHeatIndex] - sensor2list[startingHeatIndex]);
+										heatingGains.add(heatGain);
 
 									}
 									
