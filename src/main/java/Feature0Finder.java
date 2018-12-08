@@ -162,9 +162,9 @@ public class Feature0Finder {
 	{
 		CategoryTableXYDataset dataset = new CategoryTableXYDataset();		
 		for(int i = 1; i < currentTemps.size(); i++){
-			dataset.add(currentTemps.get(i),heatingGains.get(i), "Heating");
+			dataset.add(currentTemps.get(i),heatingGains.get(i), "Heating Gains");
 		} 
-		JFreeChart lineChartObject = ChartFactory.createScatterPlot("Heatings vs Starting Temp", "Starting Temp", "Heat Gained", dataset);
+		JFreeChart lineChartObject = ChartFactory.createScatterPlot("Heating Gains vs Starting Temp", "Starting Temp", "Heat Gained", dataset);
 
 		int width = dataset.getItemCount() + 200;
 		int height = 500;

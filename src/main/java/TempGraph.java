@@ -69,7 +69,12 @@ public class TempGraph {
 				dataset,PlotOrientation.VERTICAL,
 				true,true,false);
 
+		
 		int width = dataset.getItemCount() + 200;
+		if(width < 700)
+		{
+			width = 700;
+		}
 		int height = 500;
 		File lineChart = new File( filename ); 
 		try {

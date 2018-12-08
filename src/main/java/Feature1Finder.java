@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
@@ -51,7 +52,7 @@ public class Feature1Finder {
 
 		Double countDrop  =0.0;
 		Double added = 0.0;
-		for(int i = 0; i < sensor2list.length - 100; i ++)
+		for(int i = 1000; i < sensor2list.length - 100; i ++)
 		{
 
 			Double difference = sensor2list[i + 1] - sensor2list[i];
@@ -75,17 +76,16 @@ public class Feature1Finder {
 				}
 				if(startingDropIndex != endingDropIndex)
 				{
-					System.out.println(startingDropIndex + " to " + endingDropIndex);
+				
 					Double tempDropped = sensor2list[endingDropIndex] - sensor2list[startingDropIndex];
-					System.out.println("");
 
-					if(tempDropped> 1)
+					if(tempDropped < -10.0)
 					{
-						for(int k = startingDropIndex - 10; k <= endingDropIndex; k++)
-						{
-							Double differencek = sensor3list[k + 1] - sensor3list[k];
-							System.out.println(differencek);
-						}
+						System.out.println(startingDropIndex + " to " + endingDropIndex);
+						System.out.println(tempDropped);
+						
+						TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startingDropIndex - 500, endingDropIndex + 100),Arrays.copyOfRange(sensor3list, startingDropIndex - 500, endingDropIndex + 100),Arrays.copyOfRange(unixTimes, startingDropIndex - 500, endingDropIndex + 100),"./f1/" + startingDropIndex + ".jpeg");
+						tg.createGraph();
 
 					}	
 					added += 1;

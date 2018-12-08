@@ -136,7 +136,7 @@ public class readData {
 
 
 		int startCopy = 0;
-		int endCopy = 10000;
+		int endCopy = 20000;
 		/*
 
 		Forecast f = new Forecast();
@@ -168,11 +168,11 @@ public class readData {
 		ff0.createGraph();
 		 */
 
-		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
+		TempGraph tg = new TempGraph(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor1list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy),"tempAdj.jpeg");
 		tg.createGraph();
 
 		Feature1Finder ff1 = new Feature1Finder(Arrays.copyOfRange(sensor2list, startCopy, endCopy),Arrays.copyOfRange(sensor3list, startCopy, endCopy),Arrays.copyOfRange(unixTimes, startCopy, endCopy));
-		ff1.findFaucetSharpIncrease();
+		ff1.findSharpDecreses();
 
 
 
